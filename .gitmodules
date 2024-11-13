@@ -1,0 +1,4 @@
+[submodule "Vencord"]
+	path = Vencord
+	url = https://github.com/ItsFelix5/Cord.git
+	branch = vencord
