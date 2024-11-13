@@ -1,0 +1,51 @@
+{
+	"productName": "Cord",
+	"mainBinaryName": "Cord",
+	"identifier": "me.felix.cord",
+	"build": {
+		"beforeDevCommand": "pnpm run dev",
+		"beforeBuildCommand": "pnpm run build",
+		"frontendDist": "https://discord.com/app",
+		"devUrl": "https://discord.com/app"
+	},
+	"bundle": {
+		"active": true,
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico", "icons/icon.icnc"],
+		"resources": ["./plugin.js"],
+		"shortDescription": "The least cute discord client mod"
+	},
+	"app": {
+		"security": {
+			"capabilities": [
+				{
+					"identifier": "default",
+					"description": "permissions",
+					"windows": ["main"],
+					"remote": {
+						"urls": ["https://discord.com"]
+					},
+					"permissions": [
+						"core:window:allow-close",
+						"core:window:allow-minimize",
+						"core:window:allow-start-dragging",
+						"core:window:allow-toggle-maximize",
+						"core:window:allow-set-decorations",
+						"shell:allow-open",
+						"autostart:default"
+					]
+				}
+			]
+		},
+		"withGlobalTauri": true,
+		"windows": [
+			{
+				"label": "main",
+				"title": "Cord",
+				"decorations": true,
+				"dragDropEnabled": false,
+				"maximized": true,
+				"userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+			}
+		]
+	}
+}
