@@ -23,7 +23,6 @@ import { deflateSync, inflateSync } from "fflate";
 
 import { getCloudAuth, getCloudUrl } from "./cloud";
 import { Logger } from "./Logger";
-import { relaunch } from "./native";
 import { chooseFile, saveFile } from "./web";
 
 export async function importSettings(data: string) {
@@ -53,11 +52,7 @@ export async function downloadSettingsBackup() {
     const backup = await exportSettings();
     const data = new TextEncoder().encode(backup);
 
-    if (IS_DISCORD_DESKTOP) {
-        DiscordNative.fileManager.saveWithDialog(data, filename);
-    } else {
-        saveFile(new File([data], filename, { type: "application/json" }));
-    }
+    saveFile(new File([data], filename, { type: "application/json" }));
 }
 
 const toast = (type: number, message: string) =>
@@ -74,39 +69,20 @@ const toastFailure = (err: any) =>
     toast(Toasts.Type.FAILURE, `Failed to import settings: ${String(err)}`);
 
 export async function uploadSettingsBackup(showToast = true): Promise<void> {
-    if (IS_DISCORD_DESKTOP) {
-        const [file] = await DiscordNative.fileManager.openFiles({
-            filters: [
-                { name: "Vencord Settings Backup", extensions: ["json"] },
-                { name: "all", extensions: ["*"] }
-            ]
-        });
+    const file = await chooseFile("application/json");
+    if (!file) return;
 
-        if (file) {
-            try {
-                await importSettings(new TextDecoder().decode(file.data));
-                if (showToast) toastSuccess();
-            } catch (err) {
-                new Logger("SettingsSync").error(err);
-                if (showToast) toastFailure(err);
-            }
+    const reader = new FileReader();
+    reader.onload = async () => {
+        try {
+            await importSettings(reader.result as string);
+            if (showToast) toastSuccess();
+        } catch (err) {
+            new Logger("SettingsSync").error(err);
+            if (showToast) toastFailure(err);
         }
-    } else {
-        const file = await chooseFile("application/json");
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = async () => {
-            try {
-                await importSettings(reader.result as string);
-                if (showToast) toastSuccess();
-            } catch (err) {
-                new Logger("SettingsSync").error(err);
-                if (showToast) toastFailure(err);
-            }
-        };
-        reader.readAsText(file);
-    }
+    };
+    reader.readAsText(file);
 }
 
 // Cloud settings
@@ -230,7 +206,7 @@ export async function getCloudSettings(shouldNotify = true, force = false) {
                 title: "Cloud Settings",
                 body: "Your settings have been updated! Click here to restart to fully apply changes!",
                 color: "var(--green-360)",
-                onClick: IS_WEB ? () => location.reload() : relaunch,
+                onClick: location.reload,
                 noPersist: true
             });
 

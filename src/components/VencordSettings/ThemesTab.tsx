@@ -120,11 +120,9 @@ function ThemeCard({ theme, enabled, onChange, onDelete }: ThemeCardProps) {
             enabled={enabled}
             setEnabled={onChange}
             infoButton={
-                IS_WEB && (
-                    <div style={{ cursor: "pointer", color: "var(--status-danger" }} onClick={onDelete}>
-                        <DeleteIcon />
-                    </div>
-                )
+                <div style={{ cursor: "pointer", color: "var(--status-danger" }} onClick={onDelete}>
+                    <DeleteIcon />
+                </div>
             }
             footer={
                 <Flex flexDirection="row" style={{ gap: "0.2em" }}>
@@ -222,30 +220,20 @@ function ThemesTab() {
                 <Forms.FormSection title="Local Themes">
                     <QuickActionCard>
                         <>
-                            {IS_WEB ?
-                                (
-                                    <QuickAction
-                                        text={
-                                            <span style={{ position: "relative" }}>
-                                                Upload Theme
-                                                <FileInput
-                                                    ref={fileInputRef}
-                                                    onChange={onFileUpload}
-                                                    multiple={true}
-                                                    filters={[{ extensions: ["css"] }]}
-                                                />
-                                            </span>
-                                        }
-                                        Icon={PlusIcon}
-                                    />
-                                ) : (
-                                    <QuickAction
-                                        text="Open Themes Folder"
-                                        action={() => showItemInFolder(themeDir!)}
-                                        disabled={themeDirPending}
-                                        Icon={FolderIcon}
-                                    />
-                                )}
+                            <QuickAction
+                                text={
+                                    <span style={{ position: "relative" }}>
+                                        Upload Theme
+                                            <FileInput
+                                            ref={fileInputRef}
+                                            onChange={onFileUpload}
+                                            multiple={true}
+                                                filters={[{ extensions: ["css"] }]}
+                                            />
+                                    </span>
+                                }
+                                Icon={PlusIcon}
+                            />
                             <QuickAction
                                 text="Load missing Themes"
                                 action={refreshLocalThemes}

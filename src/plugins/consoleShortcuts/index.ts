@@ -26,7 +26,6 @@ import definePlugin, { PluginNative, StartAt } from "@utils/types";
 import * as Webpack from "@webpack";
 import { extract, filters, findAll, findModuleId, search } from "@webpack";
 import * as Common from "@webpack/common";
-import { loadLazyChunks } from "debug/loadLazyChunks";
 import type { ComponentType } from "react";
 
 const DESKTOP_ONLY = (f: string) => () => {
@@ -84,7 +83,6 @@ function makeShortcuts() {
         wpsearch: search,
         wpex: extract,
         wpexs: (code: string) => extract(findModuleId(code)!),
-        loadLazyChunks: IS_DEV ? loadLazyChunks : () => { throw new Error("loadLazyChunks is dev only."); },
         find,
         findAll: findAll,
         findByProps,
@@ -101,7 +99,6 @@ function makeShortcuts() {
         Api: { getter: () => Vencord.Api },
         Util: { getter: () => Vencord.Util },
         reload: () => location.reload(),
-        restart: IS_WEB ? DESKTOP_ONLY("restart") : relaunch,
         canonicalizeMatch,
         canonicalizeReplace,
         canonicalizeReplacement,
@@ -194,34 +191,21 @@ export default definePlugin({
         }
 
         // unproxy loaded modules
-        Webpack.onceReady.then(() => {
-            setTimeout(() => this.eagerLoad(false), 1000);
+        Webpack.onceReady.then(() => setTimeout(() => {
+            const shortcuts = makeShortcuts();
 
-            if (!IS_WEB) {
-                const Native = VencordNative.pluginHelpers.ConsoleShortcuts as PluginNative<typeof import("./native")>;
-                Native.initDevtoolsOpenEagerLoad();
+            for (const [key, val] of Object.entries(shortcuts)) {
+                if (!Object.hasOwn(val, "getter") || (val as any).preload === false) continue;
+
+                try {
+                    loadAndCacheShortcut(key, val, false);
+                } catch { } // swallow not found errors in DEV
             }
-        });
-    },
-
-    async eagerLoad(forceLoad: boolean) {
-        await Webpack.onceReady;
-
-        const shortcuts = makeShortcuts();
-
-        for (const [key, val] of Object.entries(shortcuts)) {
-            if (!Object.hasOwn(val, "getter") || (val as any).preload === false) continue;
-
-            try {
-                loadAndCacheShortcut(key, val, forceLoad);
-            } catch { } // swallow not found errors in DEV
-        }
+        }, 1000));
     },
 
     stop() {
         delete window.shortcutList;
-        for (const key in makeShortcuts()) {
-            delete window[key];
-        }
+        for (const key in makeShortcuts()) delete window[key];
     }
 });

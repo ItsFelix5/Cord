@@ -24,7 +24,6 @@ import { openNotificationSettingsModal } from "@components/VencordSettings/Notif
 import { closeModal, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalProps, ModalRoot, ModalSize, openModal } from "@utils/modal";
 import { useAwaiter } from "@utils/react";
 import { Alerts, Button, Forms, React, Text, Timestamp, useEffect, useReducer, useState } from "@webpack/common";
-import { nanoid } from "nanoid";
 import type { DispatchWithoutAction } from "react";
 
 import NotificationComponent from "./NotificationComponent";
@@ -63,7 +62,13 @@ export async function persistNotification(notification: NotificationData) {
         log.unshift({
             ...pureNotification,
             timestamp: Date.now(),
-            id: nanoid()
+            id: (() => {
+				// Based on nanoid
+				let id = '';
+				const bytes = crypto.getRandomValues(new Uint8Array(21));
+				for (let i = 0; i < 21; i++) id += 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'[bytes[i] & 63];
+				return id;
+			})()
         });
 
         if (log.length > limit && limit !== 200)

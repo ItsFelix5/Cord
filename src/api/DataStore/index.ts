@@ -48,9 +48,7 @@ export type UseStore = <T>(
 let defaultGetStoreFunc: UseStore | undefined;
 
 function defaultGetStore() {
-    if (!defaultGetStoreFunc) {
-        defaultGetStoreFunc = createStore(!IS_REPORTER ? "VencordData" : "VencordDataReporter", "VencordStore");
-    }
+    if (!defaultGetStoreFunc) defaultGetStoreFunc = createStore("VencordData", "VencordStore");
     return defaultGetStoreFunc;
 }
 

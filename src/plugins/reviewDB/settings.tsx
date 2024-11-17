@@ -63,9 +63,7 @@ export const settings = definePluginSettings({
 
                 <Button
                     color={Button.Colors.GREEN}
-                    onClick={() => {
-                        VencordNative.native.openExternal("https://github.com/sponsors/mantikafasi");
-                    }}
+                    onClick={() => open("https://github.com/sponsors/mantikafasi")}
                 >
                     Support ReviewDB development
                 </Button>
@@ -76,14 +74,14 @@ export const settings = definePluginSettings({
                     if (token)
                         url += "/api/redirect?token=" + encodeURIComponent(token);
 
-                    VencordNative.native.openExternal(url);
+                    open(url);
                 }}>
                     ReviewDB website
                 </Button>
 
 
                 <Button onClick={() => {
-                    VencordNative.native.openExternal("https://discord.gg/eWPBSbvznt");
+                    open("https://discord.gg/eWPBSbvznt");
                 }}>
                     ReviewDB Support Server
                 </Button>

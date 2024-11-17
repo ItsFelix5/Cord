@@ -31,7 +31,6 @@ import { findByPropsLazy, findLazy, findStoreLazy } from "@webpack";
 import { Button, Card, Constants, FluxDispatcher, Forms, lodash, Menu, MessageActions, PermissionsBits, PermissionStore, RestAPI, SelectedChannelStore, showToast, SnowflakeUtils, Toasts, useEffect, useState } from "@webpack/common";
 import { ComponentType } from "react";
 
-import { VoiceRecorderDesktop } from "./DesktopRecorder";
 import { settings } from "./settings";
 import { cl } from "./utils";
 import { VoicePreview } from "./VoicePreview";
@@ -45,8 +44,6 @@ export type VoiceRecorder = ComponentType<{
     setAudioBlob(blob: Blob): void;
     onRecordingChange?(recording: boolean): void;
 }>;
-
-const VoiceRecorder = IS_DISCORD_DESKTOP ? VoiceRecorderDesktop : VoiceRecorderWeb;
 
 const ctxMenuPatch: NavContextMenuPatchCallback = (children, props) => {
     if (props.channel.guild_id && !(PermissionStore.can(PermissionsBits.SEND_VOICE_MESSAGES, props.channel) && PermissionStore.can(PermissionsBits.SEND_MESSAGES, props.channel))) return;
@@ -190,7 +187,7 @@ function Modal({ modalProps }: { modalProps: ModalProps; }) {
 
             <ModalContent className={cl("modal")}>
                 <div className={cl("buttons")}>
-                    <VoiceRecorder
+                    <VoiceRecorderWeb
                         setAudioBlob={blob => {
                             setBlob(blob);
                             setBlobUrl(blob);

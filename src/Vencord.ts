@@ -16,19 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import "VencordNative";
 export * as Api from "./api";
 export * as Components from "./components";
 export * as Plugins from "./plugins";
 export * as Util from "./utils";
 export * as QuickCss from "./utils/quickCss";
-export * as Updater from "./utils/updater";
 export * as Webpack from "./webpack";
 export { PlainSettings, Settings };
 
 import "./utils/quickCss";
 import "./webpack/patchWebpack";
 
-import { openUpdaterModal } from "@components/VencordSettings/UpdaterTab";
 import { StartAt } from "@utils/types";
 
 import { get as dsGet } from "./api/DataStore";
@@ -36,15 +35,9 @@ import { showNotification } from "./api/Notifications";
 import { PlainSettings, Settings } from "./api/Settings";
 import { patches, PMLogger, startAllPlugins } from "./plugins";
 import { localStorage } from "./utils/localStorage";
-import { relaunch } from "./utils/native";
 import { getCloudSettings, putCloudSettings } from "./utils/settingsSync";
-import { checkForUpdates, update, UpdateLogger } from "./utils/updater";
 import { onceReady } from "./webpack";
 import { SettingsRouter } from "./webpack/common";
-
-if (IS_REPORTER) {
-    require("./debug/runReporter");
-}
 
 async function syncSettings() {
     // pre-check for local shared settings
@@ -79,7 +72,7 @@ async function syncSettings() {
                 title: "Cloud Settings",
                 body: "Your settings have been updated! Click here to restart to fully apply changes!",
                 color: "var(--green-360)",
-                onClick: relaunch
+                onClick: location.reload
             });
         }
     }
@@ -90,36 +83,6 @@ async function init() {
     startAllPlugins(StartAt.WebpackReady);
 
     syncSettings();
-
-    if (!IS_WEB && !IS_UPDATER_DISABLED) {
-        try {
-            const isOutdated = await checkForUpdates();
-            if (!isOutdated) return;
-
-            if (Settings.autoUpdate) {
-                await update();
-                if (Settings.autoUpdateNotification)
-                    setTimeout(() => showNotification({
-                        title: "Vencord has been updated!",
-                        body: "Click here to restart",
-                        permanent: true,
-                        noPersist: true,
-                        onClick: relaunch
-                    }), 10_000);
-                return;
-            }
-
-            setTimeout(() => showNotification({
-                title: "A Vencord update is available!",
-                body: "Click here to view the update",
-                permanent: true,
-                noPersist: true,
-                onClick: openUpdaterModal!
-            }), 10_000);
-        } catch (err) {
-            UpdateLogger.error("Failed to check for updates", err);
-        }
-    }
 
     if (IS_DEV) {
         const pendingPatches = patches.filter(p => !p.all && p.predicate?.() !== false);
@@ -138,13 +101,4 @@ async function init() {
 startAllPlugins(StartAt.Init);
 init();
 
-document.addEventListener("DOMContentLoaded", () => {
-    startAllPlugins(StartAt.DOMContentLoaded);
-
-    if (IS_DISCORD_DESKTOP && Settings.winNativeTitleBar && navigator.platform.toLowerCase().startsWith("win")) {
-        document.head.append(Object.assign(document.createElement("style"), {
-            id: "vencord-native-titlebar-style",
-            textContent: "[class*=titleBar]{display: none!important}"
-        }));
-    }
-}, { once: true });
+document.addEventListener("DOMContentLoaded", () => startAllPlugins(StartAt.DOMContentLoaded), { once: true });

@@ -118,7 +118,6 @@ export default definePlugin({
             find: 'id:"copy-image"',
             replacement: [
                 {
-                    // if (!IS_WEB || null ==
                     match: /!\i\.isPlatformEmbedded/,
                     replace: "false"
                 },
@@ -251,16 +250,11 @@ export default definePlugin({
             });
         }
 
-        if (IS_VESKTOP && VesktopNative.clipboard) {
-            VesktopNative.clipboard.copyImage(await imageData.arrayBuffer(), url);
-            return;
-        } else {
-            navigator.clipboard.write([
-                new ClipboardItem({
-                    "image/png": imageData
-                })
-            ]);
-        }
+        navigator.clipboard.write([
+            new ClipboardItem({
+                "image/png": imageData
+            })
+        ]);
     },
 
     async saveImage(url: string) {

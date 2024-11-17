@@ -19,11 +19,9 @@
 import { LazyComponent } from "@utils/react";
 
 // eslint-disable-next-line path-alias/no-relative
-import { FilterFn, filters, lazyWebpackSearchHistory, waitFor } from "../webpack";
+import { FilterFn, filters, waitFor } from "../webpack";
 
 export function waitForComponent<T extends React.ComponentType<any> = React.ComponentType<any> & Record<string, any>>(name: string, filter: FilterFn | string | string[]): T {
-    if (IS_REPORTER) lazyWebpackSearchHistory.push(["waitForComponent", Array.isArray(filter) ? filter : [filter]]);
-
     let myValue: T = function () {
         throw new Error(`Vencord could not find the ${name} Component`);
     } as any;
@@ -38,7 +36,5 @@ export function waitForComponent<T extends React.ComponentType<any> = React.Comp
 }
 
 export function waitForStore(name: string, cb: (v: any) => void) {
-    if (IS_REPORTER) lazyWebpackSearchHistory.push(["waitForStore", [name]]);
-
     waitFor(filters.byStoreName(name), cb, { isIndirect: true });
 }

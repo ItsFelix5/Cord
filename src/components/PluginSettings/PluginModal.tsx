@@ -23,7 +23,6 @@ import { useSettings } from "@api/Settings";
 import { classNameFactory } from "@api/Styles";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Flex } from "@components/Flex";
-import { gitRemote } from "@shared/vencordUserAgent";
 import { proxyLazy } from "@utils/lazy";
 import { Margins } from "@utils/margins";
 import { classes, isObjectEmpty } from "@utils/misc";
@@ -33,8 +32,6 @@ import { findByPropsLazy, findComponentByCodeLazy } from "@webpack";
 import { Button, Clickable, FluxDispatcher, Forms, React, Text, Tooltip, UserStore, UserUtils } from "@webpack/common";
 import { User } from "discord-types/general";
 import { Constructor } from "type-fest";
-
-import { PluginMeta } from "~plugins";
 
 import {
     ISettingElementProps,
@@ -189,25 +186,6 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
         );
     }
 
-    /*
-    function switchToPopout() {
-        onClose();
-
-        const PopoutKey = `DISCORD_VENCORD_PLUGIN_SETTINGS_MODAL_${plugin.name}`;
-        PopoutActions.open(
-            PopoutKey,
-            () => <PluginModal
-                transitionState={transitionState}
-                plugin={plugin}
-                onRestartNeeded={onRestartNeeded}
-                onClose={() => PopoutActions.close(PopoutKey)}
-            />
-        );
-    }
-    */
-
-    const pluginMeta = PluginMeta[plugin.name];
-
     return (
         <ModalRoot transitionState={transitionState} size={ModalSize.MEDIUM} className="vc-text-selectable">
             <ModalHeader separator={false}>
@@ -224,18 +202,16 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                 <Forms.FormSection>
                     <Flex className={cl("info")}>
                         <Forms.FormText className={cl("description")}>{plugin.description}</Forms.FormText>
-                        {!pluginMeta.userPlugin && (
-                            <div className="vc-settings-modal-links">
-                                <WebsiteButton
-                                    text="View more info"
-                                    href={`https://vencord.dev/plugins/${plugin.name}`}
-                                />
-                                <GithubButton
-                                    text="View source code"
-                                    href={`https://github.com/${gitRemote}/tree/main/src/plugins/${pluginMeta.folderName}`}
-                                />
-                            </div>
-                        )}
+                        <div className="vc-settings-modal-links">
+                            <WebsiteButton
+                                text="View more info"
+                                href={`https://vencord.dev/plugins/${plugin.name}`}
+                            />
+                            <GithubButton
+                                text="View source code"
+                                href={`https://github.com/itsfelix5/cord/tree/vencord/src/plugins`}
+                            />
+                        </div>
                     </Flex>
                     <Forms.FormTitle tag="h3" style={{ marginTop: 8, marginBottom: 0 }}>Authors</Forms.FormTitle>
                     <div style={{ width: "fit-content", marginBottom: 8 }}>

@@ -29,7 +29,6 @@ import definePlugin, { OptionType } from "@utils/types";
 import { extractAndLoadChunksLazy, findComponentByCodeLazy } from "@webpack";
 import { Button, Flex, Forms, React, Text, UserProfileStore, UserStore, useState } from "@webpack/common";
 import { User } from "discord-types/general";
-import virtualMerge from "virtual-merge";
 
 interface UserProfile extends User {
     themeColors?: Array<number>;
@@ -232,11 +231,20 @@ export default definePlugin({
             if (settings.store.nitroFirst && user.themeColors) return user;
             const colors = decode(user.bio);
             if (colors) {
-                return virtualMerge(user, {
-                    premiumType: 2,
-                    themeColors: colors
-                });
-            }
+				// Based on virtual-merge
+				const fallback = {};
+				const extra = { premiumType: 2, themeColors: colors };
+				const handler = { ownKeys: () => Reflect.ownKeys(fallback).concat(Reflect.ownKeys(user), Reflect.ownKeys(extra)) };
+				for (const method of ['defineProperty', 'deleteProperty', 'get', 'getOwnPropertyDescriptor', 'has', 'set'])
+					handler[method] = (_, ...args) =>
+						Reflect[method](
+							args[0] in user ? user
+							: args[0] in extra ? extra
+							: fallback,
+							...args
+						);
+				return new Proxy(fallback, handler);
+			}
         }
         return user;
     },

@@ -18,7 +18,7 @@
 
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
-import definePlugin, { OptionType, PluginNative, SettingsDefinition } from "@utils/types";
+import definePlugin, { OptionType, SettingsDefinition } from "@utils/types";
 import { showToast, Toasts } from "@webpack/common";
 import type { MouseEvent } from "react";
 
@@ -26,7 +26,6 @@ interface URLReplacementRule {
     match: RegExp;
     replace: (...matches: string[]) => string;
     description: string;
-    shortlinkMatch?: RegExp;
     accountViewReplace?: (userId: string) => string;
 }
 
@@ -36,14 +35,12 @@ const UrlReplacementRules: Record<string, URLReplacementRule> = {
         match: /^https:\/\/open\.spotify\.com\/(?:intl-[a-z]{2}\/)?(track|album|artist|playlist|user|episode|prerelease)\/(.+)(?:\?.+?)?$/,
         replace: (_, type, id) => `spotify://${type}/${id}`,
         description: "Open Spotify links in the Spotify app",
-        shortlinkMatch: /^https:\/\/spotify\.link\/.+$/,
         accountViewReplace: userId => `spotify:user:${userId}`,
     },
     steam: {
         match: /^https:\/\/(steamcommunity\.com|(?:help|store)\.steampowered\.com)\/.+$/,
         replace: match => `steam://openurl/${match}`,
         description: "Open Steam links in the Steam app",
-        shortlinkMatch: /^https:\/\/s.team\/.+$/,
         accountViewReplace: userId => `steam://openurl/https://steamcommunity.com/profiles/${userId}`,
     },
     epic: {
@@ -74,9 +71,6 @@ const pluginSettings = definePluginSettings(
     }, {} as SettingsDefinition)
 );
 
-
-const Native = VencordNative.pluginHelpers.OpenInApp as PluginNative<typeof import("./native")>;
-
 export default definePlugin({
     name: "OpenInApp",
     description: "Open links in their respective apps instead of your browser",
@@ -93,7 +87,7 @@ export default definePlugin({
         },
         {
             find: "no artist ids in metadata",
-            predicate: () => !IS_DISCORD_DESKTOP && pluginSettings.store.spotify,
+            predicate: () => pluginSettings.store.spotify,
             replacement: [
                 {
                     match: /\i\.\i\.isProtocolRegistered\(\)/g,
@@ -116,42 +110,27 @@ export default definePlugin({
 
     async handleLink(data: { href: string; }, event?: MouseEvent) {
         if (!data) return false;
-
         let url = data.href;
         if (!url) return false;
 
         for (const [key, rule] of Object.entries(UrlReplacementRules)) {
             if (!pluginSettings.store[key]) continue;
 
-            if (rule.shortlinkMatch?.test(url)) {
-                event?.preventDefault();
-                url = await Native.resolveRedirect(url);
-            }
-
             if (rule.match.test(url)) {
                 showToast("Opened link in native app", Toasts.Type.SUCCESS);
-
-                const newUrl = url.replace(rule.match, rule.replace);
-                VencordNative.native.openExternal(newUrl);
-
-                event?.preventDefault();
-                return true;
+                url = url.replace(rule.match, rule.replace);
             }
         }
 
-        // in case short url didn't end up being something we can handle
-        if (event?.defaultPrevented) {
-            window.open(url, "_blank");
-            return true;
-        }
-
-        return false;
+        open(url, "_blank");
+        event?.preventDefault();
+        return true;
     },
 
     handleAccountView(e: MouseEvent, platformType: string, userId: string) {
         const rule = UrlReplacementRules[platformType];
         if (rule?.accountViewReplace && pluginSettings.store[platformType]) {
-            VencordNative.native.openExternal(rule.accountViewReplace(userId));
+            open(rule.accountViewReplace(userId));
             e.preventDefault();
             return true;
         }

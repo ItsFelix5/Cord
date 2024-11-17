@@ -73,16 +73,11 @@ async function initThemes() {
         })
         .filter(link => link !== null);
 
-    if (IS_WEB) {
-        for (const theme of enabledThemes) {
-            const themeData = await VencordNative.themes.getThemeData(theme);
-            if (!themeData) continue;
-            const blob = new Blob([themeData], { type: "text/css" });
-            links.push(URL.createObjectURL(blob));
-        }
-    } else {
-        const localThemes = enabledThemes.map(theme => `vencord:///themes/${theme}?v=${Date.now()}`);
-        links.push(...localThemes);
+    for (const theme of enabledThemes) {
+        const themeData = await VencordNative.themes.getThemeData(theme);
+        if (!themeData) continue;
+        const blob = new Blob([themeData], { type: "text/css" });
+        links.push(URL.createObjectURL(blob));
     }
 
     themesStyle.textContent = links.map(link => `@import url("${link.trim()}");`).join("\n");
@@ -98,7 +93,4 @@ document.addEventListener("DOMContentLoaded", () => {
     SettingsStore.addChangeListener("themeLinks", initThemes);
     SettingsStore.addChangeListener("enabledThemes", initThemes);
     ThemeStore.addChangeListener(initThemes);
-
-    if (!IS_WEB)
-        VencordNative.quickCss.addThemeChangeListener(initThemes);
 });

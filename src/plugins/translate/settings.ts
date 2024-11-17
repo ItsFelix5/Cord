@@ -44,29 +44,10 @@ export const settings = definePluginSettings({
         default: "en",
         hidden: true
     },
-
     showChatBarButton: {
         type: OptionType.BOOLEAN,
         description: "Show translate button in chat bar",
         default: true
-    },
-    service: {
-        type: OptionType.SELECT,
-        description: IS_WEB ? "Translation service (Not supported on Web!)" : "Translation service",
-        disabled: () => IS_WEB,
-        options: [
-            { label: "Google Translate", value: "google", default: true },
-            { label: "DeepL Free", value: "deepl" },
-            { label: "DeepL Pro", value: "deepl-pro" }
-        ] as const,
-        onChange: resetLanguageDefaults
-    },
-    deeplApiKey: {
-        type: OptionType.STRING,
-        description: "DeepL API key",
-        default: "",
-        placeholder: "Get your API key from https://deepl.com/your-account",
-        disabled: () => IS_WEB
     },
     autoTranslate: {
         type: OptionType.BOOLEAN,
@@ -81,17 +62,3 @@ export const settings = definePluginSettings({
 }).withPrivateSettings<{
     showAutoTranslateAlert: boolean;
 }>();
-
-export function resetLanguageDefaults() {
-    if (IS_WEB || settings.store.service === "google") {
-        settings.store.receivedInput = "auto";
-        settings.store.receivedOutput = "en";
-        settings.store.sentInput = "auto";
-        settings.store.sentOutput = "en";
-    } else {
-        settings.store.receivedInput = "";
-        settings.store.receivedOutput = "en-us";
-        settings.store.sentInput = "";
-        settings.store.sentOutput = "en-us";
-    }
-}

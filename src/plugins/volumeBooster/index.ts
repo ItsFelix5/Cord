@@ -69,7 +69,6 @@ export default definePlugin({
         // Patches needed for web/vesktop
         {
             find: "streamSourceNode",
-            predicate: () => !IS_DISCORD_DESKTOP,
             group: true,
             replacement: [
                 // Remove rounding algorithm

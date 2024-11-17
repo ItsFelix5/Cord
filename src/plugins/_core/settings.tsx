@@ -22,14 +22,11 @@ import CloudTab from "@components/VencordSettings/CloudTab";
 import PatchHelperTab from "@components/VencordSettings/PatchHelperTab";
 import PluginsTab from "@components/VencordSettings/PluginsTab";
 import ThemesTab from "@components/VencordSettings/ThemesTab";
-import UpdaterTab from "@components/VencordSettings/UpdaterTab";
 import VencordTab from "@components/VencordSettings/VencordTab";
 import { Devs } from "@utils/constants";
 import { getIntlMessage } from "@utils/discord";
 import definePlugin, { OptionType } from "@utils/types";
 import { React } from "@webpack/common";
-
-import gitHash from "~git-hash";
 
 type SectionType = "HEADER" | "DIVIDER" | "CUSTOM";
 type SectionTypes = Record<SectionType, SectionType>;
@@ -105,12 +102,6 @@ export default definePlugin({
                 label: "Themes",
                 element: ThemesTab,
                 className: "vc-themes"
-            },
-            !IS_UPDATER_DISABLED && {
-                section: "VencordUpdater",
-                label: "Updater",
-                element: UpdaterTab,
-                className: "vc-updater"
             },
             {
                 section: "VencordCloud",
@@ -202,47 +193,11 @@ export default definePlugin({
         },
     },
 
-    get electronVersion() {
-        return VencordNative.native.getVersions().electron || window.legcord?.electron || null;
-    },
-
-    get chromiumVersion() {
-        try {
-            return VencordNative.native.getVersions().chrome
-                // @ts-ignore Typescript will add userAgentData IMMEDIATELY
-                || navigator.userAgentData?.brands?.find(b => b.brand === "Chromium" || b.brand === "Google Chrome")?.version
-                || null;
-        } catch { // inb4 some stupid browser throws unsupported error for navigator.userAgentData, it's only in chromium
-            return null;
-        }
-    },
-
-    get additionalInfo() {
-        if (IS_DEV) return " (Dev)";
-        if (IS_WEB) return " (Web)";
-        if (IS_VESKTOP) return ` (Vesktop v${VesktopNative.app.getVersion()})`;
-        if (IS_STANDALONE) return " (Standalone)";
-        return "";
-    },
-
-    getInfoRows() {
-        const { electronVersion, chromiumVersion, additionalInfo } = this;
-
-        const rows = [`Vencord ${gitHash}${additionalInfo}`];
-
-        if (electronVersion) rows.push(`Electron ${electronVersion}`);
-        if (chromiumVersion) rows.push(`Chromium ${chromiumVersion}`);
-
-        return rows;
-    },
-
     getInfoString() {
-        return "\n" + this.getInfoRows().join("\n");
+        return `\n${IS_DEV ? 'Dev' : ""}Cord (${VERSION})`;
     },
 
     makeInfoElements(Component: React.ComponentType<React.PropsWithChildren>, props: React.PropsWithChildren) {
-        return this.getInfoRows().map((text, i) =>
-            <Component key={i} {...props}>{text}</Component>
-        );
+        return <Component {...props}>{IS_DEV ? 'Dev' : ""}Cord ({VERSION})</Component>;
     }
 });

@@ -22,7 +22,6 @@ import { canonicalizeReplacement } from "@utils/patches";
 import { PatchReplacement } from "@utils/types";
 import { WebpackInstance } from "discord-types/other";
 
-import { traceFunction } from "../debug/Tracer";
 import { patches } from "../plugins";
 import { _initWebpack, beforeInitListeners, factoryListeners, moduleListeners, subscriptions, wreq } from ".";
 
@@ -268,7 +267,7 @@ function patchFactories(factories: Record<string, (module: any, exports: any, re
 
             patchedBy.add(patch.plugin);
 
-            const executePatch = traceFunction(`patch by ${patch.plugin}`, (match: string | RegExp, replace: string) => code.replace(match, replace));
+            const executePatch = (match: string | RegExp, replace: string) => code.replace(match, replace);
             const previousMod = mod;
             const previousCode = code;
 
@@ -284,9 +283,7 @@ function patchFactories(factories: Record<string, (module: any, exports: any, re
                     if (newCode === code) {
                         if (!patch.noWarn) {
                             logger.warn(`Patch by ${patch.plugin} had no effect (Module id is ${id}): ${replacement.match}`);
-                            if (IS_DEV) {
-                                logger.debug("Function Source:\n", code);
-                            }
+                            if (IS_DEV) logger.debug("Function Source:\n", code);
                         }
 
                         if (patch.group) {

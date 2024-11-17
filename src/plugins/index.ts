@@ -27,8 +27,6 @@ import { FluxEvents } from "@webpack/types";
 
 import Plugins from "~plugins";
 
-import { traceFunction } from "../debug/Tracer";
-
 const logger = new Logger("PluginManager", "#a6d189");
 
 export const PMLogger = logger;
@@ -54,22 +52,11 @@ export function addPatch(newPatch: Omit<Patch, "plugin">, pluginName: string) {
     const patch = newPatch as Patch;
     patch.plugin = pluginName;
 
-    if (IS_REPORTER) {
-        delete patch.predicate;
-        delete patch.group;
-    }
-
     if (patch.predicate && !patch.predicate()) return;
 
     canonicalizeFind(patch);
     if (!Array.isArray(patch.replacement)) {
         patch.replacement = [patch.replacement];
-    }
-
-    if (IS_REPORTER) {
-        patch.replacement.forEach(r => {
-            delete r.predicate;
-        });
     }
 
     patch.replacement = patch.replacement.filter(({ predicate }) => !predicate || predicate());
@@ -94,9 +81,7 @@ for (const p of pluginsValues) if (isPluginEnabled(p.name)) {
         if (!dep) {
             const error = new Error(`Plugin ${p.name} has unresolved dependency ${d}`);
 
-            if (IS_DEV) {
-                throw error;
-            }
+            if (IS_DEV) throw error;
 
             logger.warn(error);
             return;
@@ -123,18 +108,16 @@ for (const p of pluginsValues) {
     }
 
     if (p.patches && isPluginEnabled(p.name)) {
-        if (!IS_REPORTER || isReporterTestable(p, ReporterTestable.Patches)) {
-            for (const patch of p.patches) {
-                addPatch(patch, p.name);
-            }
+        for (const patch of p.patches) {
+            addPatch(patch, p.name);
         }
     }
 }
 
-export const startAllPlugins = traceFunction("startAllPlugins", function startAllPlugins(target: StartAt) {
+export function startAllPlugins(target: StartAt) {
     logger.info(`Starting plugins (stage ${target})`);
     for (const name in Plugins) {
-        if (isPluginEnabled(name) && (!IS_REPORTER || isReporterTestable(Plugins[name], ReporterTestable.Start))) {
+        if (isPluginEnabled(name)) {
             const p = Plugins[name];
 
             const startAt = p.startAt ?? StartAt.WebpackReady;
@@ -143,7 +126,7 @@ export const startAllPlugins = traceFunction("startAllPlugins", function startAl
             startPlugin(Plugins[name]);
         }
     }
-});
+}
 
 export function startDependenciesRecursive(p: Plugin) {
     let restartNeeded = false;
@@ -173,7 +156,7 @@ export function startDependenciesRecursive(p: Plugin) {
 }
 
 export function subscribePluginFluxEvents(p: Plugin, fluxDispatcher: typeof FluxDispatcher) {
-    if (p.flux && !subscribedFluxEventsPlugins.has(p.name) && (!IS_REPORTER || isReporterTestable(p, ReporterTestable.FluxEvents))) {
+    if (p.flux && !subscribedFluxEventsPlugins.has(p.name)) {
         subscribedFluxEventsPlugins.add(p.name);
 
         logger.debug("Subscribing to flux events of plugin", p.name);
@@ -214,7 +197,7 @@ export function subscribeAllPluginsFluxEvents(fluxDispatcher: typeof FluxDispatc
     }
 }
 
-export const startPlugin = traceFunction("startPlugin", function startPlugin(p: Plugin) {
+export function startPlugin(p: Plugin) {
     const { name, commands, contextMenus } = p;
 
     if (p.start) {
@@ -258,9 +241,9 @@ export const startPlugin = traceFunction("startPlugin", function startPlugin(p: 
     }
 
     return true;
-}, p => `startPlugin ${p.name}`);
+}
 
-export const stopPlugin = traceFunction("stopPlugin", function stopPlugin(p: Plugin) {
+export function stopPlugin(p: Plugin) {
     const { name, commands, contextMenus } = p;
 
     if (p.stop) {
@@ -301,4 +284,4 @@ export const stopPlugin = traceFunction("stopPlugin", function stopPlugin(p: Plu
     }
 
     return true;
-}, p => `stopPlugin ${p.name}`);
+}
