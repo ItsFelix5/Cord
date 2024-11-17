@@ -14,7 +14,6 @@ import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-    { ignores: ["dist", "browser", "packages/vencord-types"] },
     {
         files: ["src/**/*.{tsx,ts,mts,mjs,js,jsx}", "eslint.config.mjs"],
         plugins: {
@@ -52,7 +51,7 @@ export default tseslint.config(
             "simple-header/header": [
                 "error",
                 {
-                    "files": ["scripts/header-new.txt", "scripts/header-old.txt"],
+                    "files": ["licences/header-based-on.txt", "licences/header.txt", "licences/header-vencord.txt", "licences/header-vencord-old.txt"],
                     "templates": { "author": [".*", "Vendicated and contributors"] }
                 }
             ],

@@ -1,23 +1,19 @@
 {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/.svelte-kit": true,
+        "**/.vscode": true,
+        "**/*_min.js": true,
+        "**/*.lock": true,
+        "**/Cargo.lock": true,
+        "**/node_modules": true,
+        "**/pnpm-lock.yaml": true,
+        "**/target": true
     },
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    },
-    "javascript.format.semicolons": "insert",
-    "typescript.format.semicolons": "insert",
-    "typescript.preferences.quoteStyle": "double",
-    "javascript.preferences.quoteStyle": "double",
-
-    "gitlens.remotes": [
-        {
-            "domain": "codeberg.org",
-            "type": "Gitea"
-        }
-    ]
+    "explorerExclude.backup": {}
 }

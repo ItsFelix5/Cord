@@ -1,0 +1,3 @@
+Cord, a Discord client based on Vencord
+Copyright (c) {year} Cord contributors
+SPDX-License-Identifier: GPL-3.0-or-later
