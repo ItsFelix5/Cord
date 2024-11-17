@@ -1,4 +1,4 @@
 plugin.js
 .vscode/
 node_modules/
-pnpm-lock.json
+pnpm-lock.yaml

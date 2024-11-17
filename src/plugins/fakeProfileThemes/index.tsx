@@ -1,20 +1,10 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 // This plugin is a port from Alyxia's Vendetta plugin
 import "./index.css";
@@ -235,7 +225,7 @@ export default definePlugin({
 				const fallback = {};
 				const extra = { premiumType: 2, themeColors: colors };
 				const handler = { ownKeys: () => Reflect.ownKeys(fallback).concat(Reflect.ownKeys(user), Reflect.ownKeys(extra)) };
-				for (const method of ['defineProperty', 'deleteProperty', 'get', 'getOwnPropertyDescriptor', 'has', 'set'])
+				for (const method of ["defineProperty", "deleteProperty", "get", "getOwnPropertyDescriptor", "has", "set"])
 					handler[method] = (_, ...args) =>
 						Reflect[method](
 							args[0] in user ? user

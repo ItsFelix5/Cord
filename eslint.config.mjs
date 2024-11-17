@@ -51,7 +51,7 @@ export default tseslint.config(
             "simple-header/header": [
                 "error",
                 {
-                    "files": ["licences/header-based-on.txt", "licences/header.txt", "licences/header-vencord.txt", "licences/header-vencord-old.txt"],
+                    "files": ["licenses/header-based-on.txt", "licenses/header.txt", "licenses/header-vencord.txt", "licenses/header-vencord-old.txt"],
                     "templates": { "author": [".*", "Vendicated and contributors"] }
                 }
             ],

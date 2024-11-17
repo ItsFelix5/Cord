@@ -1,20 +1,10 @@
-/*!
- * Vencord, a modification for Discord's desktop app
+/*
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "VencordNative";
 export * as Api from "./api";
@@ -97,6 +87,19 @@ async function init() {
             );
     }
 }
+
+// @ts-ignore
+Notification = (title: string, { body, icon }: NotificationOptions = {}) => window.__TAURI__.core.invoke("notify", { title, body, icon });
+Notification.requestPermission = (cb?: NotificationPermissionCallback) => (cb?.("granted"), Promise.resolve("granted"));
+Object.defineProperty(Notification, "permission", { value: "granted", writable: false });
+
+const { open } = window;
+window.open = (url?: string | URL, target?: string, features?: string) => {
+    if (url instanceof URL) url = url.href;
+    if (url === undefined || url === "about:blank" || url.endsWith("discord.com/popout")) return open(url, target, features);
+    window.__TAURI__.core.invoke("open", url);
+    return null;
+};
 
 startAllPlugins(StartAt.Init);
 init();

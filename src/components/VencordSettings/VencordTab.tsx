@@ -1,20 +1,10 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import { openNotificationLogModal } from "@api/Notifications/notificationLog";
 import { useSettings } from "@api/Settings";
@@ -22,7 +12,7 @@ import { classNameFactory } from "@api/Styles";
 import DonateButton from "@components/DonateButton";
 import { openPluginModal } from "@components/PluginSettings/PluginModal";
 import { Margins } from "@utils/margins";
-import { Button, Card, Forms, React, Select, Switch } from "@webpack/common";
+import { Button, Card, Forms, React, Switch } from "@webpack/common";
 
 import { Flex, GithubIcon, LogIcon, PaintbrushIcon, RestartIcon } from "..";
 import { openNotificationSettingsModal } from "./NotificationSettings";
@@ -78,10 +68,10 @@ function VencordSettings() {
                     </Button>!
                 </Forms.FormText>
 
-				<Switch key='useQuickCss' value={settings.useQuickCss} onChange={v => (settings.useQuickCss = v)} note='Loads your Custom CSS'>
+				<Switch key="useQuickCss" value={settings.useQuickCss} onChange={v => (settings.useQuickCss = v)} note="Loads your Custom CSS">
 					Enable Custom CSS
 				</Switch>
-				<Switch key='autoStart' value={window.__TAURI__.autostart.isEnabled()} onChange={v => window.__TAURI__.autostart[v ? 'enable' : 'disable']()}>
+				<Switch key="autoStart" value={window.__TAURI__.autostart.isEnabled()} onChange={v => window.__TAURI__.autostart[v ? "enable" : "disable"]()}>
 					Start Cord automatically when your computer starts
 				</Switch>
             </Forms.FormSection>

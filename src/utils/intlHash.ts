@@ -60,18 +60,18 @@ export function runtimeHashMessageKey(key: string): string {
     // Copyright 2016, Pierre Curto <github.com/pierrec>
     // Copyright 2019, Daniel Lo Nigro <github.com/Daniel15>
     // Copyright 2021, intrnl <github.com/intrnl>
-    let seed = BigInt.asUintN(32, BigInt(0));
+    const seed = BigInt.asUintN(32, BigInt(0));
     let v1 = trunc(seed + PRIME64_1 + PRIME64_2);
     let v2 = trunc(seed + PRIME64_2);
     let v3 = seed;
     let v4 = trunc(seed - PRIME64_1);
     let len1 = 0;
     let memsize = 0;
-    let input = encoder.encode(key);
+    const input = encoder.encode(key);
 
     let p = 0;
-    let len = input.length;
-    let bEnd = p + len;
+    const len = input.length;
+    const bEnd = p + len;
 
     len1 += len;
 
@@ -91,16 +91,16 @@ export function runtimeHashMessageKey(key: string): string {
             other = memoryToBigInt(memory, p64);
             v1 = trunc(rotl(trunc(v1 + other * PRIME64_2), 31n) * PRIME64_1);
 
-            p64 += 8
-            other = memoryToBigInt(memory, p64)
+            p64 += 8;
+            other = memoryToBigInt(memory, p64);
             v2 = trunc(rotl(trunc(v2 + other * PRIME64_2), 31n) * PRIME64_1);
 
-            p64 += 8
-            other = memoryToBigInt(memory, p64)
+            p64 += 8;
+            other = memoryToBigInt(memory, p64);
             v3 = trunc(rotl(trunc(v3 + other * PRIME64_2), 31n) * PRIME64_1);
 
-            p64 += 8
-            other = memoryToBigInt(memory, p64)
+            p64 += 8;
+            other = memoryToBigInt(memory, p64);
             v4 = trunc(rotl(trunc(v4 + other * PRIME64_2), 31n) * PRIME64_1);
 
             p += 32 - memsize;
@@ -113,22 +113,22 @@ export function runtimeHashMessageKey(key: string): string {
             do {
                 let other;
 
-                other = memoryToBigInt(input, p)
+                other = memoryToBigInt(input, p);
                 v1 = trunc(rotl(trunc(v1 + other * PRIME64_2), 31n) * PRIME64_1);
-                p += 8
+                p += 8;
 
-                other = memoryToBigInt(input, p)
+                other = memoryToBigInt(input, p);
                 v2 = trunc(rotl(trunc(v2 + other * PRIME64_2), 31n) * PRIME64_1);
-                p += 8
+                p += 8;
 
-                other = memoryToBigInt(input, p)
+                other = memoryToBigInt(input, p);
                 v3 = trunc(rotl(trunc(v3 + other * PRIME64_2), 31n) * PRIME64_1);
-                p += 8
+                p += 8;
 
-                other = memoryToBigInt(input, p)
+                other = memoryToBigInt(input, p);
                 v4 = trunc(rotl(trunc(v4 + other * PRIME64_2), 31n) * PRIME64_1);
-                p += 8
-            } while (p <= limit)
+                p += 8;
+            } while (p <= limit);
         }
 
         if (p < bEnd) {

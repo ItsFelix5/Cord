@@ -1,20 +1,10 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2023 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import * as DataStore from "@api/DataStore";
 import { Settings } from "@api/Settings";
@@ -64,9 +54,9 @@ export async function persistNotification(notification: NotificationData) {
             timestamp: Date.now(),
             id: (() => {
 				// Based on nanoid
-				let id = '';
+				let id = "";
 				const bytes = crypto.getRandomValues(new Uint8Array(21));
-				for (let i = 0; i < 21; i++) id += 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'[bytes[i] & 63];
+				for (let i = 0; i < 21; i++) id += "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"[bytes[i] & 63];
 				return id;
 			})()
         });

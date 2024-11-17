@@ -1,20 +1,10 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 import "./PluginModal.css";
 
@@ -203,13 +193,13 @@ export default function PluginModal({ plugin, onRestartNeeded, onClose, transiti
                     <Flex className={cl("info")}>
                         <Forms.FormText className={cl("description")}>{plugin.description}</Forms.FormText>
                         <div className="vc-settings-modal-links">
-                            <WebsiteButton
+                            {!plugin.authors.some(a=>a.cord)&&<WebsiteButton
                                 text="View more info"
                                 href={`https://vencord.dev/plugins/${plugin.name}`}
-                            />
+                            />}
                             <GithubButton
                                 text="View source code"
-                                href={`https://github.com/itsfelix5/cord/tree/vencord/src/plugins`}
+                                href={"https://github.com/ItsFelix5/Cord/tree/vencord/src/plugins"}
                             />
                         </div>
                     </Flex>

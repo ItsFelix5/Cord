@@ -1,29 +1,17 @@
 /*
- * Vencord, a modification for Discord's desktop app
+ * Cord, a Discord client based on Vencord
+ * Copyright (c) 2024 Cord contributors
+ * Code based on Vencord.
  * Copyright (c) 2022 Vendicated and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 
 export const WEBPACK_CHUNK = "webpackChunkdiscord_app";
-export const REACT_GLOBAL = "Vencord.Webpack.Common.React";
-export const SUPPORT_CHANNEL_ID = "1026515880080842772";
 
 export interface Dev {
     name: string;
     id: bigint;
-    badge?: boolean;
+    cord?: boolean;
 }
 
 /**
@@ -39,8 +27,7 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     },
     Arjix: {
         name: "ArjixWasTaken",
-        id: 674710789138939916n,
-        badge: false
+        id: 674710789138939916n
     },
     Cyn: {
         name: "Cynosphere",
@@ -209,7 +196,6 @@ export const Devs = /* #__PURE__*/ Object.freeze({
     nick: {
         name: "nick",
         id: 347884694408265729n,
-        badge: false
     },
     whqwert: {
         name: "whqwert",
@@ -575,10 +561,15 @@ export const Devs = /* #__PURE__*/ Object.freeze({
         name: "RamziAH",
         id: 1279957227612147747n,
     },
-        SomeAspy: {
+    SomeAspy: {
         name: "SomeAspy",
         id: 516750892372852754n,
     },
+    Felix: {
+        name: "Felix",
+        id: 591326343933853881n,
+        cord: true
+    }
 } satisfies Record<string, Dev>);
 
 // iife so #__PURE__ works correctly
